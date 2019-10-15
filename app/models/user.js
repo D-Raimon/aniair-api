@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  admin: {
+    type: String,
+    default: false,
+    required: true
+  },
   token: String
 }, {
   timestamps: true,

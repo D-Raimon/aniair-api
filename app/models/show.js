@@ -1,0 +1,38 @@
+const mongoose = require('mongoose')
+
+const showUploadSchema = mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  airDay: {
+    type: String,
+    required: true
+  },
+  numOfEps: {
+    type: Number,
+    required: true
+  },
+  url: {
+    type: String,
+    required: true
+  },
+  shortDescription: {
+    type: String,
+    required: true
+  },
+  longDescription: {
+    type: String,
+    required: true
+  },
+  trailer: {
+    type: String,
+    required: false
+  }
+}, {
+  timestamps: true
+})
+
+const ShowUpload = mongoose.model('ShowUpload', showUploadSchema)
+
+module.exports = ShowUpload

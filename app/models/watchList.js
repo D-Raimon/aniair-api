@@ -2,36 +2,20 @@ const mongoose = require('mongoose')
 require('./user')
 
 const watchlistSchema = mongoose.Schema({
-  sunday: {
-    type: Array,
-    required: false
+  name: {
+    type: String,
+    required: true
   },
-  monday: {
-    type: Array,
-    required: false
+  airDay: {
+    type: String,
+    required: true
   },
-  tuesday: {
-    type: Array,
-    required: false
+  showId: {
+    type: String,
+    required: true
   },
-  wednesday: {
-    type: Array,
-    required: false
-  },
-  thursday: {
-    type: Array,
-    required: false
-  },
-  friday: {
-    type: Array,
-    required: false
-  },
-  saturday: {
-    type: Array,
-    required: false
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectID,
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   }
@@ -39,6 +23,6 @@ const watchlistSchema = mongoose.Schema({
   timestamps: true
 })
 
-const Watchlist = mongoose.model('ShowUpload', watchlistSchema)
+const Watchlist = mongoose.model('Watchlist', watchlistSchema)
 
 module.exports = Watchlist

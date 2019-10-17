@@ -1,7 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 
-const Watchlist = require('../models/book')
+const Watchlist = require('../models/watchlist')
 
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -70,7 +70,7 @@ router.post('/watchlist', requireToken, (req, res, next) => {
 //     .then(handle404)
 //     .then(watchlist => {
 //       requireOwnership(req, watchlist)
-//       return watchlist.update(req.body.book)
+//       return watchlist.update(req.body.watchlist)
 //     })
 //     .then(() => res.sendStatus(204))
 //     .catch(next)

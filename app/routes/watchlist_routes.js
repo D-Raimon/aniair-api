@@ -1,7 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 
-const Watchlist = require('../models/watchlist')
+const Watchlist = require('../models/watchList')
 
 const requireToken = passport.authenticate('bearer', { session: false })
 

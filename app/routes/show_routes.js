@@ -34,23 +34,26 @@ router.get('/shows/:id', (req, res, next) => {
     .catch(next)
 })
 
-// DELETE /bookls/:id (destroy)
-router.delete('/shows/:id', (req, res, next) => {
+// DELETE /shows/:id (destroy)
+router.delete('/shows/:id', requireToken, (req, res, next) => {
   Show.findById(req.params.id)
     .then(handle404)
     .then(show => {
       requireOwnership(req, show)
-      show.remove()
+      show.deleteOne()
     })
     .then(() => res.sendStatus(204))
     .catch(next)
 })
 
-// POST /books (create)
-router.post('/shows', (req, res, next) => {
+// POST /shows (create)
+router.post('/shows', requireToken, (req, res, next) => {
   req.body.show.owner = req.user.id
-  const show = req.body.show
-  Show.create(show)
+
+  Show.create(req.body.show)
+    // .then(show => {
+    //   return Show.populate(show, { path: 'owner', model: 'User' })
+    // })
     .then(show => res.status(201).json({ show: show.toObject() }))
     .catch(next)
 })
@@ -65,7 +68,7 @@ router.patch('/shows/:id', requireToken, removeBlanks, (req, res, next) => {
     .then(show => {
       requireOwnership(req, show)
 
-      return show.update(req.body.show)
+      return show.updateOne(req.body.show)
     })
     .then(() => res.sendStatus(204))
     .catch(next)

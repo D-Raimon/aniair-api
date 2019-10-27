@@ -1,20 +1,20 @@
 const express = require('express')
-// const passport = require('passport')
+const passport = require('passport')
 
 const Show = require('../models/show')
 
 // const handleErrors = require('../../lib/error_handler')
 const customErrors = require('../../lib/custom_errors')
-// const requireOwnership = customErrors.requireOwnership
+const requireOwnership = customErrors.requireOwnership
 const handle404 = customErrors.handle404
 
 const removeBlanks = require('../../lib/remove_blank_fields')
 
-// const requireToken = passport.authenticate('bearer', { session: false })
+const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
-// GET /books (index)
+// GET /shows (index)
 router.get('/shows', (req, res, next) => {
   Show.find()
     .then(shows => {
@@ -24,7 +24,7 @@ router.get('/shows', (req, res, next) => {
     .catch(next)
 })
 
-// GET /books/:id (show)
+// GET /shows/:id (show)
 router.get('/shows/:id', (req, res, next) => {
   Show.findById(req.params.id)
     .then(handle404)
@@ -39,6 +39,7 @@ router.delete('/shows/:id', (req, res, next) => {
   Show.findById(req.params.id)
     .then(handle404)
     .then(show => {
+      requireOwnership(req, show)
       show.remove()
     })
     .then(() => res.sendStatus(204))
@@ -47,6 +48,7 @@ router.delete('/shows/:id', (req, res, next) => {
 
 // POST /books (create)
 router.post('/shows', (req, res, next) => {
+  req.body.show.owner = req.user.id
   const show = req.body.show
   Show.create(show)
     .then(show => res.status(201).json({ show: show.toObject() }))
@@ -54,31 +56,33 @@ router.post('/shows', (req, res, next) => {
 })
 
 // 204 OPTION
-// PATCH /books/:id (update)
-// router.patch('/books/:id', requireToken, removeBlanks, (req, res, next) => {
-//   delete req.body.book.owner
-//
-//   Book.findById(req.params.id)
-//     .then(handle404)
-//     .then(book => {
-//       requireOwnership(req, book)
-//
-//       return book.update(req.body.book)
-//     })
-//     .then(() => res.sendStatus(204))
-//     .catch(next)
-// })
+// PATCH /shows/:id (update)
+router.patch('/shows/:id', requireToken, removeBlanks, (req, res, next) => {
+  delete req.body.show.owner
 
-// 200 OPTION
-router.patch('/shows/:id', removeBlanks, (req, res, next) => {
   Show.findById(req.params.id)
     .then(handle404)
     .then(show => {
-      return show.set(req.body.show).save()
+      requireOwnership(req, show)
+
+      return show.update(req.body.show)
     })
-    .then(show => res.status(200).json({ show: show.toObject() }))
     .then(() => res.sendStatus(204))
     .catch(next)
 })
+
+// 200 OPTION
+// router.patch('/shows/:id', removeBlanks, (req, res, next) => {
+//   delete req.body.show.owner
+//   Show.findById(req.params.id)
+//     .then(handle404)
+//     .then(show => {
+//       requireOwnership(req, show)
+//       return show.set(req.body.show).save()
+//     })
+//     .then(show => res.status(200).json({ show: show.toObject() }))
+//     .then(() => res.sendStatus(204))
+//     .catch(next)
+// })
 
 module.exports = router
